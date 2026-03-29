@@ -15,8 +15,13 @@ class SongRepositoryFirebase extends SongRepository {
   // URI for a specific song by ID
   Uri songByIdUri(String id) => Uri.https(baseUrl, '/songs/$id.json');
 
+  List<Song>? _cachedSongs;
+
   @override
   Future<List<Song>> fetchSongs() async {
+    if (_cachedSongs != null) {
+      return _cachedSongs!;
+    }
     final http.Response response = await http.get(songsUri());
 
     if (response.statusCode == 200) {
@@ -26,6 +31,7 @@ class SongRepositoryFirebase extends SongRepository {
       for (final entry in songJson.entries) {
         result.add(SongDto.fromJson(entry.key, entry.value));
       }
+      _cachedSongs = result;
       return result;
     } else {
       throw Exception('Failed to load songs');
@@ -46,17 +52,23 @@ class SongRepositoryFirebase extends SongRepository {
 
   @override
   Future<void> likeSong(String id, int currentLikes, bool isLike) async {
-    final newLikes = isLike ? currentLikes - 1 : currentLikes + 1;
-    final newIsLike = !isLike;
+    final newtotalLike = isLike ? currentLikes + 1 : currentLikes - 1;
+    final newIsLike = isLike;
 
     // ✅ Patch only the specific song using its ID
     final http.Response response = await http.patch(
       songByIdUri(id),
-      body: json.encode({'totalLike': newLikes, 'isLike': newIsLike}),
+      body: json.encode({'totalLike': newtotalLike, 'isLike': newIsLike}),
     );
 
     if (response.statusCode >= 400) {
       throw Exception('Failed to update like');
     }
+  }
+
+  @override
+  void clearCache() {
+    _cachedSongs = null;
+    // TODO: implement clearCache
   }
 }

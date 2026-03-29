@@ -25,7 +25,7 @@ class LibraryItemTile extends StatelessWidget {
           borderRadius: BorderRadius.circular(15),
         ),
         child: ListTile(
-          selectedTileColor: isPlaying? Colors.amber : Colors.white,
+          tileColor: isPlaying? Colors.green : Colors.white,
           onTap: onTap,
           title: Text(data.song.title),
           subtitle: Row(

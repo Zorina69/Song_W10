@@ -38,9 +38,10 @@ class LibraryContent extends StatelessWidget {
             isPlaying: mv.isSongPlaying(data[index].song),
             onTap: () {
               if (mv.isSongPlaying(data[index].song)) {
+                mv.stop(data[index].song);
+              } else {
                 mv.start(data[index].song);
               }
-              mv.stop(data[index].song);
             },
             isLike: () async {
               try {
@@ -55,17 +56,24 @@ class LibraryContent extends StatelessWidget {
         );
     }
 
-    return Padding(
-      padding: const EdgeInsets.all(20.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(height: 16),
-          Text("Library", style: AppTextStyles.heading),
-          SizedBox(height: 50),
+    return RefreshIndicator(
+      onRefresh: () async {
+        mv.songRepository.clearCache();
+        mv.artistRepository.clearCache();
+        mv.fetchSong();
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(height: 16),
+            Text("Library", style: AppTextStyles.heading),
+            SizedBox(height: 50),
 
-          Expanded(child: content),
-        ],
+            Expanded(child: content),
+          ],
+        ),
       ),
     );
   }

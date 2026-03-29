@@ -12,8 +12,13 @@ class ArtistRepositoryFirebase implements ArtistRepository {
     '/artists.json',
   );
 
+  List<Artist>? _cachedArtists;
+
   @override
   Future<List<Artist>> fetchArtists() async {
+    if (_cachedArtists != null) {
+      return _cachedArtists!;
+    }
     final http.Response response = await http.get(artistsUri);
 
     if (response.statusCode == 200) {
@@ -24,6 +29,7 @@ class ArtistRepositoryFirebase implements ArtistRepository {
       for (final entry in songJson.entries) {
         result.add(ArtistDto.fromJson(entry.key, entry.value));
       }
+      _cachedArtists = result;
       return result;
     } else {
       // 2- Throw expcetion if any issue
@@ -34,5 +40,11 @@ class ArtistRepositoryFirebase implements ArtistRepository {
   @override
   Future<Artist?> fetchArtistById(String id) async {
     throw Exception('Failed to laod posts');
+  }
+
+  @override
+  void clearCache() {
+    _cachedArtists = null;
+    // TODO: implement clearCache
   }
 }
