@@ -1,14 +1,14 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
- 
+
 import '../../../model/artist/artist.dart';
 import '../../dtos/artist_dto.dart';
 import 'artist_repository.dart';
 
 class ArtistRepositoryFirebase implements ArtistRepository {
   final Uri artistsUri = Uri.https(
-    'test-a2a77-default-rtdb.asia-southeast1.firebasedatabase.app',
+    'mytestdatabase-33021-default-rtdb.asia-southeast1.firebasedatabase.app',
     '/artists.json',
   );
 
@@ -32,5 +32,7 @@ class ArtistRepositoryFirebase implements ArtistRepository {
   }
 
   @override
-  Future<Artist?> fetchArtistById(String id) async {}
+  Future<Artist?> fetchArtistById(String id) async {
+    throw Exception('Failed to laod posts');
+  }
 }
