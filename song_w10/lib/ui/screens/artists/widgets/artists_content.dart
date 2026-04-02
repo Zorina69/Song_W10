@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:song_w10/ui/screens/artists/artist_detail_screen.dart';
  
 import '../../../../model/artist/artist.dart';
 import '../../../theme/theme.dart';
@@ -32,10 +33,30 @@ class ArtistsContent extends StatelessWidget {
 
       case AsyncValueState.success:
         List<Artist> artists = asyncValue.data!;
-        content = ListView.builder(
-          itemCount: artists.length,
-          itemBuilder: (context, index) => ArtistTile(artist: artists[index]),
-        );
+        if (artists.isEmpty) {
+          content = Center(
+            child: Text(
+              'No artists available',
+              style: TextStyle(color: Colors.grey),
+            ),
+          );
+        } else {
+          content = ListView.builder(
+            itemCount: artists.length,
+            itemBuilder: (context, index) => ArtistTile(
+              artist: artists[index],
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        ArtistDetailScreen(artistId: artists[index].id),
+                  ),
+                );
+              },
+            ),
+          );
+        }
     }
 
     return Padding(
@@ -44,7 +65,7 @@ class ArtistsContent extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(height: 16),
-          Text("Library", style: AppTextStyles.heading),
+          Text("Artists", style: AppTextStyles.heading),
           SizedBox(height: 50),
 
           Expanded(child: content),
